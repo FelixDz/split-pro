@@ -11,13 +11,12 @@ export const createRecurringExpenseJob = async (
   // Implementation for creating a recurring expense job using pg_cron
   const cronExpression = getCronExpression(date, repeatEvery, repeatInterval);
 
-  const procedure = '';
-
   await db.$executeRaw`
-    SELECT cron.schedule(${expenseId}, ${cronExpression}, $$
-    INSERT INTO 
-    $$);
-  `;
+SELECT cron.schedule(
+  ${expenseId}, 
+  ${cronExpression}, 
+  $$ SELECT duplicate_expense_with_participants(${expenseId}::UUID); $$
+);`;
 };
 
 const getCronExpression = (date: Date, repeatEvery: number, repeatInterval: RecurrenceInterval) => {
